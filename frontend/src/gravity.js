@@ -10,7 +10,7 @@ const sketch = (i) => {
   let fallingDown = true
 
   i.preload = () => {
-    cursorImg = i.loadImage("../static/cursor3.png");
+    cursorImg = i.loadImage("../static/cursor.png");
   };
   i.setup = () => {
     i.createCanvas(i.windowWidth, i.windowHeight);
@@ -44,8 +44,6 @@ const sketch = (i) => {
       ySpeed = 0.00000001;
       fallingDown = !fallingDown
     }
-
-
 
     let deltaMouseY = i.pmouseY - i.mouseY;
     yPosition -= deltaMouseY;
