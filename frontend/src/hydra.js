@@ -1,78 +1,91 @@
 // import {drawCursor} from './utils'
 
-
-
-const sketch = (i) => {
-  let cursorImg;
-  let cursorH = 546;
-  let cursorW = 826;
-  let fallingDown = true;
-  let xDistanceFromCursor;
-  let yDistanceFromCursor;
-  let range;
-  let myCursors = []
-
-  i.preload = () => {
-    cursorImg = i.loadImage("../static/cursor.png");
-  };
-  i.setup = () => {
-    i.createCanvas(i.windowWidth, i.windowHeight);
-  };
-
-  const drawCursor = (img, cursorH, cursorW) => {
-    let ySpeed = 0;
-    let xSpeed = 0;
-    let xPosition = 0;
-    let yPosition = 0;
-    let xDistanceFromCursor = xPosition - i.mouseX;
-    let yDistanceFromCursor = yPosition - i.mouseY;
-    range = 0.3;
-    let xAdjustedRange = range; //xDistanceFromCursor
-    let yAdjustedRange = range; //yDistanceFromCursor
-
+class HydraCursor {
+  constructor(p5instance, xPosition, yPosition) {
+    this.p5i = p5instance;
+    this.xSpeed = 0;
+    this.ySpeed = 0;
+    this.xPosition = xPosition;
+    this.yPosition = yPosition;
+    this.range = 0.1;
+  }
+  move() {
     //brownian walk
-    xSpeed += i.random(-xAdjustedRange, xAdjustedRange);
-    xPosition += xSpeed;
-    ySpeed += i.random(-yAdjustedRange, yAdjustedRange);
-    yPosition += ySpeed;
+    this.xSpeed += this.p5i.random(-this.range, this.range);
+    this.xPosition += this.xSpeed;
+    this.ySpeed += this.p5i.random(-this.range, this.range);
+    this.yPosition += this.ySpeed;
 
     //bounce on screen edges
-    if (xPosition < 10 || xPosition > i.windowWidth - 10) {
-      xSpeed = -xSpeed;
+    if (this.xPosition < 10 || this.xPosition > this.p5i.windowWidth - 10) {
+      this.xSpeed = -this.xSpeed;
     }
-    if (yPosition < 10 || xPosition > i.windowHeight - 10) {
-      ySpeed = -ySpeed;
+    if (this.yPosition < 10 || this.xPosition > this.p5i.windowHeight - 10) {
+      this.ySpeed = -this.ySpeed;
     }
 
     //don't go off screen
-    yPosition = i.max(0, yPosition);
-    xPosition = i.max(0, xPosition);
-    yPosition = i.min(i.windowHeight - 15, yPosition);
-    xPosition = i.min(i.windowWidth - 15, xPosition);
+    this.yPosition = this.p5i.max(0, this.yPosition);
+    this.xPosition = this.p5i.max(0, this.xPosition);
+    this.yPosition = this.p5i.min(this.p5i.windowHeight - 15, this.yPosition);
+    this.xPosition = this.p5i.min(this.p5i.windowWidth - 15, this.xPosition);
 
     // mouse still influences cursor
-    let deltaMouseX = i.pmouseX - i.mouseX;
-    xPosition -= deltaMouseX;
-    let deltaMouseY = i.pmouseY - i.mouseY;
-    yPosition -= deltaMouseY;
+    let deltaMouseX = this.p5i.pmouseX - this.p5i.mouseX;
+    this.xPosition -= deltaMouseX;
+    let deltaMouseY = this.p5i.pmouseY - this.p5i.mouseY;
+    this.yPosition -= deltaMouseY;
+  }
+  show(hydraCursorImage, hydraCursorImageH, hydraCursorImageW) {
+    //draw the cursor
+    return this.p5i.image(
+      hydraCursorImage,
+      this.xPosition,
+      this.yPosition,
+      hydraCursorImageH,
+      hydraCursorImageW
+    );
+  }
+}
 
-    return i.image(img, xPosition, yPosition, cursorH, cursorW);
+const sketch = (p5i) => {
+  let cursorImg;
+  let cursorH = 546;
+  let cursorW = 826;
+  let myHydraCursors;
+  let initialCursor;
+
+  p5i.preload = () => {
+    cursorImg = p5i.loadImage("../static/cursor.png");
+  };
+  p5i.setup = () => {
+    p5i.createCanvas(p5i.windowWidth, p5i.windowHeight);
+    myHydraCursors = [];
+    initialCursor = new HydraCursor(p5i, p5i.mouseX, p5i.mouseY);
+    myHydraCursors.push(initialCursor);
   };
 
-  i.draw = () => {
-    i.background(220);
-    i.noCursor();
+  p5i.draw = () => {
+    p5i.background(220);
+    p5i.noCursor();
+    for (let i = 0; i < myHydraCursors.length; i++) {
+      myHydraCursors[i].move();
+      myHydraCursors[i].show(cursorImg, cursorH / 50, cursorW / 50);
+    }
 
-    // loop for  c in my cursors
-    drawCursor(cursorImg, cursorH / 50, cursorW / 50);
-    // if (i.mousePressed()){
+    // if (p5i.mousePressed()){
     //     drawCursor(cursorImg, cursorH / 50, cursorW / 50);
     // }
-
   };
-  i.mousePressed = () => {
-    alert('!!!')
-    drawCursor(cursorImg, cursorH / 50, cursorW / 50);
+
+  p5i.mousePressed = () => {
+    let newHydraCursor = new HydraCursor(p5i, p5i.mouseX, p5i.mouseY);
+    myHydraCursors.push(newHydraCursor);
+  };
+
+  p5i.mouseDragged = () => {
+    let newHydraCursor = new HydraCursor(p5i, p5i.mouseX, p5i.mouseY);
+    myHydraCursors.push(newHydraCursor);
   };
 };
 
