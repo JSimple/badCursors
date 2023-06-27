@@ -1,4 +1,5 @@
 // import {drawCursor} from './utils'
+// TO DO: captcha I am not a robot
 
 const sketch = (i) => {
   let cursorImg;

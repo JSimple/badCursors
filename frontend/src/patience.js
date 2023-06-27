@@ -5,7 +5,8 @@ class PatienceCursor {
     this.ySpeed = 0;
     this.xPosition = xPosition;
     this.yPosition = yPosition;
-    this.range = 50;
+    this.minSensitivity = 20;
+    this.maxSensitivity = 2.5;
     this.stuck = false;
     this.counter = 0;
     this.timerTracker = false
@@ -20,7 +21,7 @@ class PatienceCursor {
 
     }
     console.log('running get stuck. stuck:', this.stuck)
-    let stuckLength = 1;
+    let stuckLength = this.p5i.random(3) * 60;
     if ((this.p5i.frameCount - this.timerStart) / 60 > stuckLength){
         this.stuck = false;
         this.timerTracker = false
@@ -33,7 +34,7 @@ class PatienceCursor {
     let deltaMouseTotal = Math.sqrt((deltaMouseX ** 2) + (deltaMouseY ** 2));
 
     // gets stuck if mouse moves too much
-    if (deltaMouseTotal > this.range) {
+    if (deltaMouseTotal > this.p5i.random(this.maxSensitivity,this.minSensitivity)) {
       this.stuck = true
     }
 
@@ -67,23 +68,32 @@ class PatienceCursor {
 
 const sketch = (p5i) => {
   let cursorImg;
+  let stuckCursorImg
   let cursorH = 546;
   let cursorW = 826;
-  let initialCursor
+  let myPatienceCursor
 
   p5i.preload = () => {
-    cursorImg = p5i.loadImage("../static/cursor.png");
+    cursorImg = p5i.loadImage("../static/cursor.png")
+    stuckCursorImg = p5i.loadImage("../static/hourglass.jpg");
   };
   p5i.setup = () => {
     p5i.createCanvas(p5i.windowWidth, p5i.windowHeight);
-    initialCursor = new PatienceCursor(p5i, p5i.mouseX, p5i.mouseY);
+    myPatienceCursor = new PatienceCursor(p5i, p5i.mouseX, p5i.mouseY);
   };
 
   p5i.draw = () => {
     p5i.background(220);
     p5i.noCursor();
-    initialCursor.move();
-    initialCursor.show(cursorImg, cursorH/50, cursorW/50);
+    myPatienceCursor.move();
+    if (myPatienceCursor.stuck){
+        myPatienceCursor.show(stuckCursorImg, cursorH/30, cursorW/50);
+        p5i.textSize(25)
+        p5i.textFont('Courier')
+        p5i.text('cursor motion too fast. \ntry chill.', p5i.windowWidth/2, p5i.windowHeight/2)        
+    } else {
+        myPatienceCursor.show(cursorImg, cursorH/50, cursorW/50);
+    }
   };
 };
 

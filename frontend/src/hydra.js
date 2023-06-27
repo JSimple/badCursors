@@ -1,4 +1,5 @@
 // import {drawCursor} from './utils'
+// TODO: make version where it gets less functional the more it moves
 
 class HydraCursor {
   constructor(p5instance, xPosition, yPosition) {
