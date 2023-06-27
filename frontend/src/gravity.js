@@ -1,4 +1,5 @@
 // import {drawCursor} from './utils'
+// TO DO: captcha I am not a robot
 
 const sketch = (i) => {
   let cursorImg;
@@ -7,7 +8,7 @@ const sketch = (i) => {
   let yPosition = 0;
   let cursorH = 546;
   let cursorW = 826;
-  let fallingDown = true
+  let fallingDown = true;
 
   i.preload = () => {
     cursorImg = i.loadImage("../static/cursor.png");
@@ -24,25 +25,23 @@ const sketch = (i) => {
   i.draw = () => {
     i.background(220);
     ySpeed = ySpeed + Math.sqrt(Math.sqrt(ySpeed)) / 100;
-    
-    
-    if (fallingDown){
-      yPosition += ySpeed
+
+    if (fallingDown) {
+      yPosition += ySpeed;
     } else {
-      yPosition -= ySpeed
+      yPosition -= ySpeed;
     }
 
     if (yPosition > i.windowHeight) {
       yPosition = i.windowHeight + 10;
       ySpeed = 0.00000001;
-      fallingDown = !fallingDown
+      fallingDown = !fallingDown;
     }
-
 
     if (yPosition < 0) {
       yPosition = 10;
       ySpeed = 0.00000001;
-      fallingDown = !fallingDown
+      fallingDown = !fallingDown;
     }
 
     let deltaMouseY = i.pmouseY - i.mouseY;
